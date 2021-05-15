@@ -44,54 +44,55 @@ ALvoid DisplayALError(char * text, ALint errorcode) {
 
 
 void initReverb(EFXEAXREVERBPROPERTIES * reverb) {
-    reverb - > flDensity = 1.0000 f;
-    reverb - > flDiffusion = 1.0000 f;
-    reverb - > flGain = 0.3162 f;
-    reverb - > flGainHF = 0.8913 f;
-    reverb - > flGainLF = 1.0000 f;
-    reverb - > flDecayTime = 10.0 f;
-    reverb - > flDecayHFRatio = 0.8300 f;
-    reverb - > flDecayLFRatio = 1.0000 f;
-    reverb - > flReflectionsGain = 0.0500 f;
-    reverb - > flReflectionsDelay = 0.0070 f;
-    reverb - > flReflectionsPan[0] = 0.0000 f;
-    reverb - > flReflectionsPan[1] = 0.0000 f;
-    reverb - > flReflectionsPan[2] = 0.0000 f;
-    reverb - > flLateReverbGain = 1.2589 f;
-    reverb - > flLateReverbDelay = 0.0110 f;
-    reverb - > flLateReverbPan[0] = 0.0000 f;
-    reverb - > flLateReverbPan[1] = 0.0000 f;
-    reverb - > flLateReverbPan[2] = 0.0000 f;
-    reverb - > flEchoTime = 0.2500 f;
-    reverb - > flEchoDepth = 0.0000 f;
-    reverb - > flModulationTime = 0.2500 f;
-    reverb - > flModulationDepth = 0.0000 f;
-    reverb - > flAirAbsorptionGainHF = 0.9943 f;
-    reverb - > flHFReference = 5000.0000 f;
-    reverb - > flLFReference = 250.0000 f;
-    reverb - > flRoomRolloffFactor = 0.0000 f;
-    reverb - > iDecayHFLimit = 0x1;
+    reverb->flDensity = 1.0000f;
+    reverb->flDiffusion = 1.0000f;
+    reverb->flGain = 0.3162f;
+    reverb->flGainHF = 0.8913f;
+    reverb->flGainLF = 1.0000f;
+    reverb->flDecayTime = 10.0f;
+    reverb->flDecayHFRatio = 0.8300f;
+    reverb->flDecayLFRatio = 1.0000f;
+    reverb->flReflectionsGain = 0.0500f;
+    reverb->flReflectionsDelay = 0.0070f;
+    reverb->flReflectionsPan[0] = 0.0000f;
+    reverb->flReflectionsPan[1] = 0.0000f;
+    reverb->flReflectionsPan[2] = 0.0000f;
+    reverb->flLateReverbGain = 1.2589f;
+    reverb->flLateReverbDelay = 0.0110f;
+    reverb->flLateReverbPan[0] = 0.0000f;
+    reverb->flLateReverbPan[1] = 0.0000f;
+    reverb->flLateReverbPan[2] = 0.0000f;
+    reverb->flEchoTime = 0.2500f;
+    reverb->flEchoDepth = 0.0000f;
+    reverb->flModulationTime = 0.2500f;
+    reverb->flModulationDepth = 0.0000f;
+    reverb->flAirAbsorptionGainHF = 0.9943f;
+    reverb->flHFReference = 5000.0000f;
+    reverb->flLFReference = 250.0000f;
+    reverb->flRoomRolloffFactor = 0.0000f;
+    reverb->iDecayHFLimit = 0x1;
 }
 
 
 void initOpenAL(ALuint* source) {
     ALCenum error;
+    ALCint iSends = 0;
 
-    ALCdevice device = alcOpenDevice(NULL);
+    ALCdevice* device = alcOpenDevice(NULL);
 
     if (device) {
-        ALCcontext context = alcCreateContext(device, NULL);
+        ALCcontext* context = alcCreateContext(device, NULL);
         alcMakeContextCurrent(context);
     }
 
-    if (alcIsExtensionPresent(pDevice, "ALC_EXT_EFX") == AL_FALSE) {
+    if (alcIsExtensionPresent(device, "ALC_EXT_EFX") == AL_FALSE) {
         printf("Initialization failure : EFX Extension not found\n");
         return;
     }
 
     /* Retrieve the actual number of Aux Sends */
     /* available on each Source */
-    alcGetIntegerv(pDevice, ALC_MAX_AUXILIARY_SENDS, 1, & iSends);
+    alcGetIntegerv(device, ALC_MAX_AUXILIARY_SENDS, 1, &iSends);
 
 
     /* Define a macro to help load the function pointers. */
@@ -118,7 +119,7 @@ void initOpenAL(ALuint* source) {
     LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTI, alGetAuxiliaryEffectSloti);
     LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTIV, alGetAuxiliaryEffectSlotiv);
     LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTF, alGetAuxiliaryEffectSlotf);
-    LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTFV, alGetAuxiliaryEffectSlotfv);#
+    LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTFV, alGetAuxiliaryEffectSlotfv);
 #undef LOAD_PROC
 
     alGetError();
@@ -150,8 +151,7 @@ void initOpenAL(ALuint* source) {
 }
 
 
-void loadEffectWithReverb(ALuint * effect,
-    const EFXEAXREVERBPROPERTIES reverb) {
+void loadEffectWithReverb(ALuint * effect, const EFXEAXREVERBPROPERTIES reverb) {
     ALCenum error;
     * effect = 0;
 
@@ -205,21 +205,21 @@ void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
     alSource3f(source, AL_POSITION, 0, 0, 0);
 
     // Charger le reverb dans un effet
-    loadEffectWithReverb( & effect, reverb);
+    loadEffectWithReverb(&effect, reverb);
 
     // On crée le slot, qui va connecter l'effet et la source
     slot = 0;
-    alGenAuxiliaryEffectSlots(1, & slot);
+    alGenAuxiliaryEffectSlots(1, &slot);
 
     // On affecte l'effet et la source au slot
     alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) effect);
     alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, AL_FILTER_NULL);
 
     alSourcePlay(source);
-    alGetSourcei(source, AL_SOURCE_STATE, & state);
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
 
     while (alGetError() == AL_NO_ERROR && state == AL_PLAYING)
-        alGetSourcei(source, AL_SOURCE_STATE, & state);
+        alGetSourcei(source, AL_SOURCE_STATE, &state);
 }
 
 
@@ -229,19 +229,19 @@ void setOrientation(int value) {
 
     switch (value) {
         case 1:
-            orientation[2] = -1.0 f;
+            orientation[2] = -1.0f;
             break;
 
         case 2:
-            orientation[0] = -1.0 f;
+            orientation[0] = -1.0f;
             break;
 
         case 3:
-            orientation[0] = 1.0 f;
+            orientation[0] = 1.0f;
             break;
 
         case 4:
-            orientation[2] = 1.0 f;
+            orientation[2] = 1.0f;
             break;
 
         default:
@@ -258,8 +258,8 @@ void setOrientation(int value) {
 }
 
 void closeOpenAL() {
-    ALCcontext context = alcGetCurrentContext();
-    ALCdevice device = alcGetContextsDevice(context);
+    ALCcontext* context = alcGetCurrentContext();
+    ALCdevice* device = alcGetContextsDevice(context);
     alcMakeContextCurrent(NULL);
     alcDestroyContext(context);
     alcCloseDevice(device);
