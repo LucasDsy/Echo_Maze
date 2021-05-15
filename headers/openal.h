@@ -78,12 +78,14 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
 
 
 void loadSource(ALuint* source) {
+    ALCenum error;
 
     // On génère le buffer
     ALuint buffer = alutCreateBufferFromFile(AUDIONAME);
 
     // Gestion erreur buffer
-    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
+    error = alGetError();
+    if (error != AL_NO_ERROR) {
         printf("Can't create buffer from file %s", AUDIONAME);
         return;
     }
@@ -95,7 +97,8 @@ void loadSource(ALuint* source) {
     alSourcei(source, AL_BUFFER, (ALint) buffer);
     
     // Gestion erreur chargement de la source
-    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
+    error = alGetError();
+    if (error != AL_NO_ERROR) {
         printf("Can't load buffer to source !\n");
         return;
     }
@@ -127,13 +130,17 @@ void initOpenAL() {
     ALfloat orientation[6] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
     
     alListenerfv(AL_POSITION, position);
-    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
+    
+    error = alGetError()
+    if (error != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
+    
+    error = alGetError()
+    if (error != AL_NO_ERROR) {
         DisplayALError("alListenerfv ORIENTATION : ", error);
         return;
     }
@@ -184,7 +191,7 @@ void initOpenAL() {
 
 
 void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
-
+    ALCenum error;
     *effect = 0;
 
     // On crée l'objet effet
@@ -219,7 +226,8 @@ void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
     }
 
     // Gestion des erreurs
-    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
+    error = alGetError();
+    if (error != AL_NO_ERROR) {
         fprintf(stderr, "OpenAL error: %s\n", alGetString(error));
         if (alIsEffect(effect))
             alDeleteEffects(1, &effect);
@@ -255,6 +263,7 @@ void playSourceWithReverb(ALSource source, EFXEAXREVERBPROPERTIES reverb) {
 
 
 void setOrientation(int value) {
+    ALCenum error;
     ALfloat orientation[6] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     
     switch (value) {
@@ -279,7 +288,9 @@ void setOrientation(int value) {
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
+    
+    error = alGetError();
+    if (error != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
