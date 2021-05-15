@@ -61,7 +61,6 @@ void runner(int** maze, t_position player, t_position exit) {
 
 int main() {
     int** maze = readMaze();
-    displayMaze(maze);
 
     //OpenAL
     initOpenAL();

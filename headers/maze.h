@@ -16,7 +16,7 @@ int** readMaze() {
 
     for (int i = 0; i < SIZE; i++) {
         getline(&line, &length, file);
-        maze[i] = malloc(sizeof(int*) * SIZE);
+        maze[i] = malloc(sizeof(int) * SIZE);
         
         for (int j = 0; j < SIZE; j++) {
             maze[i][j] = (int) line[j] - 48; // ASCII to int
@@ -29,17 +29,6 @@ int** readMaze() {
     fclose(file);
     
     return maze;
-}
-
-
-void displayMaze(int** maze) {
-    for (int i = 0; i < SIZE; i++) {
-
-        for (int j = 0; j < SIZE; j++)
-            printf("%d", *(*(maze+i)+j));
-
-        printf("\n");
-    }
 }
 
 
