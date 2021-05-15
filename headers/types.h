@@ -1,5 +1,6 @@
 
 #ifndef H_TYPES
+#define H_TYPES
 
 typedef enum {
     INCONNUE = 0,
