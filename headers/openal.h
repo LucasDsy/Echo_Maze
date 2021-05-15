@@ -101,6 +101,8 @@ void loadSource(ALuint* source) {
         printf("Can't load buffer to source !\n");
         return;
     }
+
+    alSourcePlay(*source);
 }
 
 
@@ -125,8 +127,8 @@ void initOpenAL() {
     
     printf("EFX Extension found!\n");
 
-    ALfloat position[3] = {0.0, 0.0, 0.0};
-    ALfloat orientation[6] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
+    ALfloat position[3] = {0.0f, 0.0f, 0.0f};
+    ALfloat orientation[6] = {0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f}; // Nord par défaut
     
     alListenerfv(AL_POSITION, position);
     
@@ -293,4 +295,12 @@ void setOrientation(int value) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
+}
+
+void closeOpenAL() {
+    ALCdevice context = alcGetCurrentContext();
+    ALCcontext device = alcGetContextsDevice(context);
+    alcMakeContextCurrent(NULL);
+    alcDestroyContext(context);
+    alcCloseDevice(device);
 }

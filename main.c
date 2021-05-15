@@ -81,6 +81,8 @@ int main() {
 
     movePlayer(maze, SIZE, player);
     runner(maze, player, exit);
+
+    closeOpenAL();
     
     return EXIT_SUCCESS;
 }
