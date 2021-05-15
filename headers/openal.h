@@ -195,42 +195,42 @@ void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
     *effect = 0;
 
     // On crée l'objet effet
-    alGenEffects(1, &effect);
+    alGenEffects(1, effect);
 
     // On s'assure que EAXREVERB est dispo et on applique les paramètres reverb
     if (alGetEnumValue("AL_EFFECT_EAXREVERB") != 0) {
-        alEffecti(effect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
-        alEffectf(effect, AL_EAXREVERB_DENSITY, reverb.flDensity);
-        alEffectf(effect, AL_EAXREVERB_DIFFUSION, reverb.flDiffusion);
-        alEffectf(effect, AL_EAXREVERB_GAIN, reverb.flGain);
-        alEffectf(effect, AL_EAXREVERB_GAINHF, reverb.flGainHF);
-        alEffectf(effect, AL_EAXREVERB_GAINLF, reverb.flGainLF);
-        alEffectf(effect, AL_EAXREVERB_DECAY_TIME, reverb.flDecayTime);
-        alEffectf(effect, AL_EAXREVERB_DECAY_HFRATIO, reverb.flDecayHFRatio);
-        alEffectf(effect, AL_EAXREVERB_DECAY_LFRATIO, reverb.flDecayLFRatio);
-        alEffectf(effect, AL_EAXREVERB_REFLECTIONS_GAIN, reverb.flReflectionsGain);
-        alEffectf(effect, AL_EAXREVERB_REFLECTIONS_DELAY, reverb.flReflectionsDelay);
-        alEffectfv(effect, AL_EAXREVERB_REFLECTIONS_PAN, reverb.flReflectionsPan);
-        alEffectf(effect, AL_EAXREVERB_LATE_REVERB_GAIN, reverb.flLateReverbGain);
-        alEffectf(effect, AL_EAXREVERB_LATE_REVERB_DELAY, reverb.flLateReverbDelay);
-        alEffectfv(effect, AL_EAXREVERB_LATE_REVERB_PAN, reverb.flLateReverbPan);
-        alEffectf(effect, AL_EAXREVERB_ECHO_TIME, reverb.flEchoTime);
-        alEffectf(effect, AL_EAXREVERB_ECHO_DEPTH, reverb.flEchoDepth);
-        alEffectf(effect, AL_EAXREVERB_MODULATION_TIME, reverb.flModulationTime);
-        alEffectf(effect, AL_EAXREVERB_MODULATION_DEPTH, reverb.flModulationDepth);
-        alEffectf(effect, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, reverb.flAirAbsorptionGainHF);
-        alEffectf(effect, AL_EAXREVERB_HFREFERENCE, reverb.flHFReference);
-        alEffectf(effect, AL_EAXREVERB_LFREFERENCE, reverb.flLFReference);
-        alEffectf(effect, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, reverb.flRoomRolloffFactor);
-        alEffecti(effect, AL_EAXREVERB_DECAY_HFLIMIT, reverb.iDecayHFLimit);
+        alEffecti(*effect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
+        alEffectf(*effect, AL_EAXREVERB_DENSITY, reverb.flDensity);
+        alEffectf(*effect, AL_EAXREVERB_DIFFUSION, reverb.flDiffusion);
+        alEffectf(*effect, AL_EAXREVERB_GAIN, reverb.flGain);
+        alEffectf(*effect, AL_EAXREVERB_GAINHF, reverb.flGainHF);
+        alEffectf(*effect, AL_EAXREVERB_GAINLF, reverb.flGainLF);
+        alEffectf(*effect, AL_EAXREVERB_DECAY_TIME, reverb.flDecayTime);
+        alEffectf(*effect, AL_EAXREVERB_DECAY_HFRATIO, reverb.flDecayHFRatio);
+        alEffectf(*effect, AL_EAXREVERB_DECAY_LFRATIO, reverb.flDecayLFRatio);
+        alEffectf(*effect, AL_EAXREVERB_REFLECTIONS_GAIN, reverb.flReflectionsGain);
+        alEffectf(*effect, AL_EAXREVERB_REFLECTIONS_DELAY, reverb.flReflectionsDelay);
+        alEffectfv(*effect, AL_EAXREVERB_REFLECTIONS_PAN, reverb.flReflectionsPan);
+        alEffectf(*effect, AL_EAXREVERB_LATE_REVERB_GAIN, reverb.flLateReverbGain);
+        alEffectf(*effect, AL_EAXREVERB_LATE_REVERB_DELAY, reverb.flLateReverbDelay);
+        alEffectfv(*effect, AL_EAXREVERB_LATE_REVERB_PAN, reverb.flLateReverbPan);
+        alEffectf(*effect, AL_EAXREVERB_ECHO_TIME, reverb.flEchoTime);
+        alEffectf(*effect, AL_EAXREVERB_ECHO_DEPTH, reverb.flEchoDepth);
+        alEffectf(*effect, AL_EAXREVERB_MODULATION_TIME, reverb.flModulationTime);
+        alEffectf(*effect, AL_EAXREVERB_MODULATION_DEPTH, reverb.flModulationDepth);
+        alEffectf(*effect, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, reverb.flAirAbsorptionGainHF);
+        alEffectf(*effect, AL_EAXREVERB_HFREFERENCE, reverb.flHFReference);
+        alEffectf(*effect, AL_EAXREVERB_LFREFERENCE, reverb.flLFReference);
+        alEffectf(*effect, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, reverb.flRoomRolloffFactor);
+        alEffecti(*effect, AL_EAXREVERB_DECAY_HFLIMIT, reverb.iDecayHFLimit);
     }
 
     // Gestion des erreurs
     error = alGetError();
     if (error != AL_NO_ERROR) {
         fprintf(stderr, "OpenAL error: %s\n", alGetString(error));
-        if (alIsEffect(effect))
-            alDeleteEffects(1, &effect);
+        if (alIsEffect(*effect))
+            alDeleteEffects(1, effect);
         return;
     }
 }
