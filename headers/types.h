@@ -1,4 +1,6 @@
 
+#ifndef H_TYPES
+
 typedef enum {
     INCONNUE = 0,
     NORD = 1,
@@ -15,3 +17,5 @@ typedef struct {
 	int x, y;
     direction d;
 } t_position;
+
+#endif

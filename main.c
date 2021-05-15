@@ -65,6 +65,7 @@ int main() {
 
     //OpenAL
     initOpenAL();
+    loadSource(&source);
     initReverb(&reverb);
 
     // SDL

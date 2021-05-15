@@ -46,29 +46,29 @@ ALvoid DisplayALError(char *text, ALint errorcode) {
 
 
 void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
-    reverb.flDensity = 1.0000f;
-    reverb.flDiffusion = 1.0000f;
-    reverb.flGain = 0.3162f;
-    reverb.flGainHF = 0.8913f;
-    reverb.flGainLF = 1.0000f;
-    reverb.flDecayTime = 1.4900f;
-    reverb.flDecayHFRatio = 0.8300f;
-    reverb.flDecayLFRatio = 1.0000f;
-    reverb.flReflectionsGain = 0.0500f;
-    reverb.flReflectionsDelay = 0.0070f;
-    reverb.flReflectionsPan = { 0.0000f, 0.0000f, 0.0000f };
-    reverb.flLateReverbGain = 1.2589f;
-    reverb.flLateReverbDelay = 0.0110f;
-    reverb.flLateReverbPan = { 0.0000f, 0.0000f, 0.0000f };
-    reverb.flEchoTime = 0.2500f;
-    reverb.flEchoDepth = 0.0000f;
-    reverb.flModulationTime = 0.2500f;
-    reverb.flModulationDepth = 0.0000f;
-    reverb.flAirAbsorptionGainHF = 0.9943f;
-    reverb.flHFReference = 5000.0000f;
-    reverb.flLFReference = 250.0000f;
-    reverb.flRoomRolloffFactor = 0.0000f;
-    reverb.iDecayHFLimit = 0x1;
+    reverb->flDensity = 1.0000f;
+    reverb->flDiffusion = 1.0000f;
+    reverb->flGain = 0.3162f;
+    reverb->flGainHF = 0.8913f;
+    reverb->flGainLF = 1.0000f;
+    reverb->flDecayTime = 1.4900f;
+    reverb->flDecayHFRatio = 0.8300f;
+    reverb->flDecayLFRatio = 1.0000f;
+    reverb->flReflectionsGain = 0.0500f;
+    reverb->flReflectionsDelay = 0.0070f;
+    reverb->flReflectionsPan = { 0.0000f, 0.0000f, 0.0000f };
+    reverb->flLateReverbGain = 1.2589f;
+    reverb->flLateReverbDelay = 0.0110f;
+    reverb->flLateReverbPan = { 0.0000f, 0.0000f, 0.0000f };
+    reverb->flEchoTime = 0.2500f;
+    reverb->flEchoDepth = 0.0000f;
+    reverb->flModulationTime = 0.2500f;
+    reverb->flModulationDepth = 0.0000f;
+    reverb->flAirAbsorptionGainHF = 0.9943f;
+    reverb->flHFReference = 5000.0000f;
+    reverb->flLFReference = 250.0000f;
+    reverb->flRoomRolloffFactor = 0.0000f;
+    reverb->iDecayHFLimit = 0x1;
 }
 
 
@@ -78,7 +78,7 @@ void loadSource(ALuint* source) {
     ALuint buffer = alutCreateBufferFromFile(AUDIONAME);
 
     // Gestion erreur buffer
-    if ((ALError error = alGetError()) != AL_NO_ERROR) {
+    if ((alError error = alGetError()) != AL_NO_ERROR) {
         printf("Can't create buffer from file %s", AUDIONAME);
         return;
     }
@@ -90,7 +90,7 @@ void loadSource(ALuint* source) {
     alSourcei(source, AL_BUFFER, (ALint) buffer);
     
     // Gestion erreur chargement de la source
-    if ((ALError error = alGetError()) != AL_NO_ERROR) {
+    if ((alError error = alGetError()) != AL_NO_ERROR) {
         printf("Can't load buffer to source !\n");
         return;
     }
@@ -103,7 +103,7 @@ void initOpenAL() {
     ALCcontext *pContext = NULL;
     ALint attribs[4] = {0};
     ALCint iSends = 0;
-    ALError error;
+    alError error;
 
     pDevice = alcOpenDevice(NULL); 
     if (!pDevice) {
@@ -122,13 +122,13 @@ void initOpenAL() {
     ALfloat orientation[6] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
     
     alListenerfv(AL_POSITION, position);
-    if ((ALError error = alGetError()) != AL_NO_ERROR) {
+    if ((alError error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((ALError error = alGetError()) != AL_NO_ERROR) {
+    if ((alError error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv ORIENTATION : ", error);
         return;
     }
@@ -175,8 +175,6 @@ void initOpenAL() {
         LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTF, alGetAuxiliaryEffectSlotf);
         LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTFV, alGetAuxiliaryEffectSlotfv);
     #undef LOAD_PROC
-
-    loadSource(&source);
 }
 
 
@@ -216,8 +214,8 @@ void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
     }
 
     // Gestion des erreurs
-    if ((ALError err = alGetError()) != AL_NO_ERROR) {
-        fprintf(stderr, "OpenAL error: %s\n", alGetString(err));
+    if ((alError error = alGetError()) != AL_NO_ERROR) {
+        fprintf(stderr, "OpenAL error: %s\n", alGetString(error));
         if (alIsEffect(effect))
             alDeleteEffects(1, &effect);
         return;
@@ -277,7 +275,7 @@ void setOrientation(int value) {
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((ALError error = alGetError()) != AL_NO_ERROR) {
+    if ((alError error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
