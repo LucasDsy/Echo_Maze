@@ -56,7 +56,6 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
     reverb->flDecayLFRatio = 1.0000f;
     reverb->flReflectionsGain = 0.0500f;
     reverb->flReflectionsDelay = 0.0070f;
-    reverb->flReflectionsPan = { 0.0000f, 0.0000f, 0.0000f };
     reverb->flReflectionsPan[0] = 0.0000f;
     reverb->flReflectionsPan[1] = 0.0000f;
     reverb->flReflectionsPan[2] = 0.0000f;
@@ -131,7 +130,7 @@ void initOpenAL() {
     
     alListenerfv(AL_POSITION, position);
     
-    error = alGetError()
+    error = alGetError();
     if (error != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
@@ -139,7 +138,7 @@ void initOpenAL() {
     
     alListenerfv(AL_ORIENTATION, orientation);
     
-    error = alGetError()
+    error = alGetError();
     if (error != AL_NO_ERROR) {
         DisplayALError("alListenerfv ORIENTATION : ", error);
         return;
