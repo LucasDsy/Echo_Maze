@@ -10,7 +10,7 @@ ALuint source;
 EFXEAXREVERBPROPERTIES reverb;
 
 
-void runner(int** maze, int size, t_position player, t_position exit) {
+void runner(int** maze, t_position player, t_position exit) {
     
     static SDL_Event event;
     static const Uint8 *currentKeyStates = NULL;

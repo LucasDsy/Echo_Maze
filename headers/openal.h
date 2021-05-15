@@ -93,7 +93,7 @@ void loadSource(ALuint* source) {
     alGenSources(1, source);
 
     // On charge le buffer dans la source
-    alSourcei(source, AL_BUFFER, (ALint) buffer);
+    alSourcei(*source, AL_BUFFER, (ALint) buffer);
     
     // Gestion erreur chargement de la source
     error = alGetError();
