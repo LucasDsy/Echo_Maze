@@ -67,8 +67,7 @@ int main() {
     int** maze = readMaze();
 
     //OpenAL
-    initOpenAL();
-    loadSource(&source);
+    initOpenAL(&source);
     initReverb(&reverb);
 
 
