@@ -43,15 +43,15 @@ void runner(int** maze, int size, t_position player, t_position exit) {
         // On bouge le joueur à sa nouvelle position
         movePlayer(maze, SIZE, player);
 
+        // On rectifie l'orientation du joueur
+        setOrientation((int)player.d);
+
         // On va chercher la distance entre le joueur et chaque mur
         distances d = distancesToWall(maze, player);
-        reverb.flReflectionsPan = {
-            (float) (d.sud-d.nord)/SIZE,
-            0.0f,
-            (float) (d.est-d.ouest)/SIZE
-        };
 
-        setOrientation((int)player.d);
+        // On modifie le reverb en conséquence
+        reverb.flReflectionsPan[0] = (float) (d.sud-d.nord)/SIZE;
+        reverb.flReflectionsPan[2] = (float) (d.est-d.ouest)/SIZE;
         
         // On joue le son avec le reverb approprié
         playSourceWithReverb(source, reverb);
@@ -60,8 +60,8 @@ void runner(int** maze, int size, t_position player, t_position exit) {
 
 
 int main() {
-    int** maze = readMaze(SIZE);
-    displayMaze(maze, SIZE);
+    int** maze = readMaze();
+    displayMaze(maze);
 
     //OpenAL
     initOpenAL();

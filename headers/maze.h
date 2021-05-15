@@ -6,18 +6,18 @@
 #define SIZE 15
 
 
-int** readMaze(unsigned long int dimension) {
-    int** maze = malloc(sizeof(int*) * dimension);
+int** readMaze() {
+    int** maze = malloc(sizeof(int*) * SIZE);
     char* line = NULL;
     size_t length = 0;
 
     FILE* file = fopen(FILEPATH, "r");
 
-    for (int i = 0; i < (int) dimension; i++) {
+    for (int i = 0; i < SIZE; i++) {
         getline(&line, &length, file);
-        maze[i] = malloc(sizeof(int*)*dimension);
+        maze[i] = malloc(sizeof(int*) * SIZE);
         
-        for (int j = 0; j < (int) dimension; j++) {
+        for (int j = 0; j < SIZE; j++) {
             maze[i][j] = (int) line[j] - 48; // ASCII to int
         }
     }

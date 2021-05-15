@@ -236,7 +236,7 @@ void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
 }
 
 
-void playSourceWithReverb(ALSource source, EFXEAXREVERBPROPERTIES reverb) {
+void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
     ALuint effect, slot;
     ALenum state;
     
