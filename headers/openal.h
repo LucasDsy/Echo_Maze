@@ -9,7 +9,7 @@
 #include <AL/efx-presets.h>
 #include "types.h"
 
-#define AUDIONAME "./utils/beep.wav"
+#define AUDIONAME "../utils/beep.wav"
 #define LOAD_PROC(T, x)  ((x) = (T)alGetProcAddress(#x))
 
 
@@ -51,7 +51,7 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
     reverb->flGain = 0.3162f;
     reverb->flGainHF = 0.8913f;
     reverb->flGainLF = 1.0000f;
-    reverb->flDecayTime = 1.4900f;
+    reverb->flDecayTime = 10.0f;
     reverb->flDecayHFRatio = 0.8300f;
     reverb->flDecayLFRatio = 1.0000f;
     reverb->flReflectionsGain = 0.0500f;
@@ -127,24 +127,9 @@ void initOpenAL() {
     
     printf("EFX Extension found!\n");
 
-    ALfloat position[3] = {0.0f, 0.0f, 0.0f};
-    ALfloat orientation[6] = {0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f}; // Nord par défaut
-    
-    alListenerfv(AL_POSITION, position);
-    
-    error = alGetError();
-    if (error != AL_NO_ERROR) {
-        DisplayALError("alListenerfv POSITION : ", error);
-        return;
-    }
+    ALfloat orientation[6] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
     
     alListenerfv(AL_ORIENTATION, orientation);
-    
-    error = alGetError();
-    if (error != AL_NO_ERROR) {
-        DisplayALError("alListenerfv ORIENTATION : ", error);
-        return;
-    }
 
     attribs[0] = ALC_MAX_AUXILIARY_SENDS;
     attribs[1] = 4;
@@ -252,8 +237,8 @@ void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
     alGenAuxiliaryEffectSlots(1, &slot);
 
     // On affecte l'effet et la source au slot
-    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint)effect);
-    alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint)slot, 0, AL_FILTER_NULL);
+    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) effect);
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, AL_FILTER_NULL);
 
     alSourcePlay(source);
     alGetSourcei(source, AL_SOURCE_STATE, &state);

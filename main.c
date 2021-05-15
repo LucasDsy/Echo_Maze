@@ -44,7 +44,7 @@ void runner(int** maze, t_position player, t_position exit) {
         movePlayer(maze, SIZE, player);
 
         // On rectifie l'orientation du joueur
-        setOrientation((int)player.d);
+        //setOrientation((int)player.d);
 
         // On va chercher la distance entre le joueur et chaque mur
         distances d = distancesToWall(maze, player);
@@ -52,6 +52,10 @@ void runner(int** maze, t_position player, t_position exit) {
         // On modifie le reverb en conséquence
         reverb.flReflectionsPan[0] = (float) (d.sud-d.nord)/SIZE;
         reverb.flReflectionsPan[2] = (float) (d.est-d.ouest)/SIZE;
+
+        printf("Coordonnées joueur : x:%d y:%d d:%d\n", player.x, player.y, player.d);
+        printf("reflexionPan Sud-Nord:%lf\n", reverb.flReflectionsPan[0]);
+        printf("reflexionPan Est-Ouest:%lf\n\n", reverb.flReflectionsPan[2]);
         
         // On joue le son avec le reverb approprié
         playSourceWithReverb(source, reverb);
@@ -67,6 +71,7 @@ int main() {
     loadSource(&source);
     initReverb(&reverb);
 
+
     // SDL
     initSDL(SIZE);
     initGrid(maze, SIZE);
@@ -80,6 +85,9 @@ int main() {
 	exit.y = 13;
 
     movePlayer(maze, SIZE, player);
+
+    printf("\ntest\n\n");
+
     runner(maze, player, exit);
 
     closeOpenAL();
