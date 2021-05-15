@@ -57,9 +57,14 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
     reverb->flReflectionsGain = 0.0500f;
     reverb->flReflectionsDelay = 0.0070f;
     reverb->flReflectionsPan = { 0.0000f, 0.0000f, 0.0000f };
+    reverb->flReflectionsPan[0] = 0.0000f;
+    reverb->flReflectionsPan[1] = 0.0000f;
+    reverb->flReflectionsPan[2] = 0.0000f;
     reverb->flLateReverbGain = 1.2589f;
     reverb->flLateReverbDelay = 0.0110f;
-    reverb->flLateReverbPan = { 0.0000f, 0.0000f, 0.0000f };
+    reverb->flLateReverbPan[0] = 0.0000f;
+    reverb->flLateReverbPan[1] = 0.0000f;
+    reverb->flLateReverbPan[2] = 0.0000f;
     reverb->flEchoTime = 0.2500f;
     reverb->flEchoDepth = 0.0000f;
     reverb->flModulationTime = 0.2500f;
@@ -78,7 +83,7 @@ void loadSource(ALuint* source) {
     ALuint buffer = alutCreateBufferFromFile(AUDIONAME);
 
     // Gestion erreur buffer
-    if ((alError error = alGetError()) != AL_NO_ERROR) {
+    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
         printf("Can't create buffer from file %s", AUDIONAME);
         return;
     }
@@ -90,7 +95,7 @@ void loadSource(ALuint* source) {
     alSourcei(source, AL_BUFFER, (ALint) buffer);
     
     // Gestion erreur chargement de la source
-    if ((alError error = alGetError()) != AL_NO_ERROR) {
+    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
         printf("Can't load buffer to source !\n");
         return;
     }
@@ -103,7 +108,7 @@ void initOpenAL() {
     ALCcontext *pContext = NULL;
     ALint attribs[4] = {0};
     ALCint iSends = 0;
-    alError error;
+    ALCenum error;
 
     pDevice = alcOpenDevice(NULL); 
     if (!pDevice) {
@@ -122,13 +127,13 @@ void initOpenAL() {
     ALfloat orientation[6] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
     
     alListenerfv(AL_POSITION, position);
-    if ((alError error = alGetError()) != AL_NO_ERROR) {
+    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((alError error = alGetError()) != AL_NO_ERROR) {
+    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv ORIENTATION : ", error);
         return;
     }
@@ -214,7 +219,7 @@ void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
     }
 
     // Gestion des erreurs
-    if ((alError error = alGetError()) != AL_NO_ERROR) {
+    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
         fprintf(stderr, "OpenAL error: %s\n", alGetString(error));
         if (alIsEffect(effect))
             alDeleteEffects(1, &effect);
@@ -250,32 +255,31 @@ void playSourceWithReverb(ALSource source, EFXEAXREVERBPROPERTIES reverb) {
 
 
 void setOrientation(int value) {
-    ALfloat orientation[6];
+    ALfloat orientation[6] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     
     switch (value) {
         case 1:
-            orientation = {0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f};
+            orientation[2] = -1.0f;
             break;
 
         case 2:
-            orientation = {-1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+            orientation[0] = -1.0f;
             break;
 
         case 3:
-            orientation = {1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+            orientation[0] = 1.0f;
             break;
 
         case 4:
-            orientation = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+            orientation[2] = 1.0f;
             break;
 
         default:
-            orientation = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
             break;
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((alError error = alGetError()) != AL_NO_ERROR) {
+    if ((ALCenum error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
