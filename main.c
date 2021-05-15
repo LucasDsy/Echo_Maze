@@ -81,7 +81,7 @@ int main() {
 	exit.y = 13;
 
     movePlayer(maze, SIZE, player);
-    runner(maze, SIZE, player, exit);
+    runner(maze, player, exit);
     
     return EXIT_SUCCESS;
 }
