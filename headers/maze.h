@@ -1,26 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "types.h"
 
 #define FILEPATH "./utils/maze.txt"
 #define SIZE 15
-
-
-typedef enum {
-    INCONNUE = 0,
-    NORD = 1,
-    OUEST = 2,
-    EST = 3,
-    SUD = 4
-} direction;
-
-typedef struct {
-    int nord, ouest, est, sud;
-} distances;
-
-typedef struct {
-	int x, y;
-    direction d;
-} t_position;
 
 
 int** readMaze(unsigned long int dimension) {
@@ -101,4 +84,6 @@ distances distancesToWall(int** maze, t_position player) {
         j++;
 
     d.sud = j - player.y;
+
+    return d;
 }

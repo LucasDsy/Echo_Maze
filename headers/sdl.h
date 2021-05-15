@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include "types.h"
 
 #define GRAPHICALCELLSIZE 50
 

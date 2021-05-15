@@ -7,8 +7,7 @@
 #include <AL/alext.h>
 #include <AL/efx.h>
 #include <AL/efx-presets.h>
-
-#define EFX_REVERB_MODIFIED_PRESET { 1.0000f, 1.0000f, 0.3162f, 0.8913f, 1.0000f, 1.4900f, 0.8300f, 1.0000f, 0.0500f, 0.0070f, { 0.0000f, 0.0000f, 0.0000f }, 1.2589f, 0.0110f, { 0.0000f, 0.0000f, 0.0000f }, 0.2500f, 0.0000f, 0.2500f, 0.0000f, 0.9943f, 5000.0000f, 250.0000f, 0.0000f, 0x1 }
+#include "types.h"
 
 #define AUDIONAME "./utils/beep.wav"
 #define LOAD_PROC(T, x)  ((x) = (T)alGetProcAddress(#x))
@@ -47,19 +46,41 @@ ALvoid DisplayALError(char *text, ALint errorcode) {
 
 
 void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
-    
+    reverb.flDensity = 1.0000f;
+    reverb.flDiffusion = 1.0000f;
+    reverb.flGain = 0.3162f;
+    reverb.flGainHF = 0.8913f;
+    reverb.flGainLF = 1.0000f;
+    reverb.flDecayTime = 1.4900f;
+    reverb.flDecayHFRatio = 0.8300f;
+    reverb.flDecayLFRatio = 1.0000f;
+    reverb.flReflectionsGain = 0.0500f;
+    reverb.flReflectionsDelay = 0.0070f;
+    reverb.flReflectionsPan = { 0.0000f, 0.0000f, 0.0000f };
+    reverb.flLateReverbGain = 1.2589f;
+    reverb.flLateReverbDelay = 0.0110f;
+    reverb.flLateReverbPan = { 0.0000f, 0.0000f, 0.0000f };
+    reverb.flEchoTime = 0.2500f;
+    reverb.flEchoDepth = 0.0000f;
+    reverb.flModulationTime = 0.2500f;
+    reverb.flModulationDepth = 0.0000f;
+    reverb.flAirAbsorptionGainHF = 0.9943f;
+    reverb.flHFReference = 5000.0000f;
+    reverb.flLFReference = 250.0000f;
+    reverb.flRoomRolloffFactor = 0.0000f;
+    reverb.iDecayHFLimit = 0x1;
 }
 
 
-int loadSource(ALuint* source) {
+void loadSource(ALuint* source) {
 
     // On génère le buffer
     ALuint buffer = alutCreateBufferFromFile(AUDIONAME);
 
     // Gestion erreur buffer
-    if ((error = alGetError()) != AL_NO_ERROR) {
+    if ((ALError error = alGetError()) != AL_NO_ERROR) {
         printf("Can't create buffer from file %s", AUDIONAME);
-        return EXIT_FAILURE;
+        return;
     }
 
     // Genérer la source
@@ -69,46 +90,47 @@ int loadSource(ALuint* source) {
     alSourcei(source, AL_BUFFER, (ALint) buffer);
     
     // Gestion erreur chargement de la source
-    if ((error = alGetError()) != AL_NO_ERROR) {
+    if ((ALError error = alGetError()) != AL_NO_ERROR) {
         printf("Can't load buffer to source !\n");
-        return EXIT_FAILURE;
+        return;
     }
 }
 
 
-int initOpenAL() {
+void initOpenAL() {
     
     ALCdevice *pDevice = NULL; 
     ALCcontext *pContext = NULL;
     ALint attribs[4] = {0};
-    ALCint iSends = 0; 
+    ALCint iSends = 0;
+    ALError error;
 
     pDevice = alcOpenDevice(NULL); 
     if (!pDevice) {
         printf("Initialization failure : pDevice 1\n");
-        return EXIT_FAILURE;
+        return;
     }
     
     if (alcIsExtensionPresent(pDevice, "ALC_EXT_EFX") == AL_FALSE) {
         printf("Initialization failure : pDevice 2\n");
-        return EXIT_FAILURE;
+        return;
     }
     
     printf("EFX Extension found!\n");
 
-    ALfloat position[] = {0.0, 0.0, 0.0};
-    ALfloat orientation[] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
+    ALfloat position[3] = {0.0, 0.0, 0.0};
+    ALfloat orientation[6] = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0}; // Nord par défaut
     
     alListenerfv(AL_POSITION, position);
-    if ((error = alGetError()) != AL_NO_ERROR) {
+    if ((ALError error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
-        return EXIT_FAILURE;
+        return;
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((error = alGetError()) != AL_NO_ERROR) {
+    if ((ALError error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv ORIENTATION : ", error);
-        return EXIT_FAILURE;
+        return;
     }
 
     attribs[0] = ALC_MAX_AUXILIARY_SENDS;
@@ -117,7 +139,7 @@ int initOpenAL() {
     pContext = alcCreateContext(pDevice, attribs);
     if (!pContext) {
         printf("Initilization failure : pContext\n");
-        return EXIT_FAILURE;
+        return;
     }
     
     // On active le contexte
@@ -154,14 +176,13 @@ int initOpenAL() {
         LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTFV, alGetAuxiliaryEffectSlotfv);
     #undef LOAD_PROC
 
-    return loadSource();
+    loadSource(&source);
 }
 
 
 void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
 
     *effect = 0;
-    ALenum err;
 
     // On crée l'objet effet
     alGenEffects(1, &effect);
@@ -195,7 +216,7 @@ void loadEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
     }
 
     // Gestion des erreurs
-    if ((err = alGetError()) != AL_NO_ERROR) {
+    if ((ALError err = alGetError()) != AL_NO_ERROR) {
         fprintf(stderr, "OpenAL error: %s\n", alGetString(err));
         if (alIsEffect(effect))
             alDeleteEffects(1, &effect);
@@ -230,36 +251,34 @@ void playSourceWithReverb(ALSource source, EFXEAXREVERBPROPERTIES reverb) {
 }
 
 
-int setOrientation(int value) {
-    ALfloat orientation[];
+void setOrientation(int value) {
+    ALfloat orientation[6];
     
     switch (value) {
         case 1:
-            orientation = {0.0, 0.0, -1.0, 0.0, 0.0, 0.0};
+            orientation = {0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f};
             break;
 
         case 2:
-            orientation = {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+            orientation = {-1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
             break;
 
         case 3:
-            orientation = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+            orientation = {1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
             break;
 
         case 4:
-            orientation = {0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
+            orientation = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
             break;
 
         default:
-            orientation = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+            orientation = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
             break;
     }
     
     alListenerfv(AL_ORIENTATION, orientation);
-    if ((error = alGetError()) != AL_NO_ERROR) {
+    if ((ALError error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alListenerfv POSITION : ", error);
-        return EXIT_FAILURE;
+        return;
     }
-
-    return EXIT_SUCCESS;
 }
