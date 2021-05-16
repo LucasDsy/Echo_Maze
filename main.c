@@ -30,7 +30,7 @@ void action(int** maze, t_position player) {
     reverb.flReflectionsPan[2] = yReverb * 1.1f;
     reverb.flLateReverbPan[0] = (float) xReverb * 1.5f;
     reverb.flLateReverbPan[2] = (float) yReverb * 1.5f;
-    reverb.flDecayTime = ((float) (d.nord + d.sud + d.est + d.ouest) * 20.0 / SIZE) + 0.1;
+    reverb.flDecayTime = ((float) (d.nord + d.sud + d.est + d.ouest) * 20.0f / SIZE) + 0.1f;
 
     printf("Coordonnées joueur : x:%d y:%d d:%d\n", player.x, player.y, player.d);
     printf("reflexionPan Sud-Nord : %lf\n", reverb.flReflectionsPan[0]);
