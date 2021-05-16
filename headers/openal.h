@@ -136,7 +136,6 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     alGetError();
     
     // On génère le buffer
-    // FIXME: génération buffer & lecture fichier
     *buffer = alutCreateBufferFromFile(AUDIONAME);
 
     if ((error = alGetError()) != AL_NO_ERROR) {
@@ -153,28 +152,27 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     }
 
     // On charge le buffer dans la source
-    // alSourcei(*source, AL_BUFFER, (ALint) *buffer);
-    alSourceQueueBuffers(*source, 1, *buffer);
-
-    // On définit l'unité de distance
-    alListenerf(AL_METERS_PER_UNIT, 0.3f);
+    alSourcei(*source, AL_BUFFER, (ALint) *buffer);
+    //alSourceQueueBuffers(*source, 1, buffer);
 
     if (alGetError() == AL_NO_ERROR)
         printf("Successfully set distance units\n");
+
+    // On définit l'unité de distance
+    alListenerf(AL_METERS_PER_UNIT, 0.3f);
 
     // On définit l'orientation du listener
     ALfloat orientation[6] = { 0.0, 0.0, -1.0, 0.0, 0.0, 0.0 }; // Nord par défaut
     alListenerfv(AL_ORIENTATION, orientation);
 
-    play(source);
+    play(*source);
 
     initReverb(reverb);
 }
 
 
-ALuint* createEffectWithReverb(const EFXEAXREVERBPROPERTIES reverb) {
+void createEffectWithReverb(ALuint* effect, const EFXEAXREVERBPROPERTIES reverb) {
     ALCenum error;
-    ALuint* effect = NULL;
 
     // On crée l'effet
     alGenEffects(1, effect);
@@ -213,32 +211,30 @@ ALuint* createEffectWithReverb(const EFXEAXREVERBPROPERTIES reverb) {
         fprintf(stderr, "OpenAL error: %s\n", alGetString(error));
         if (alIsEffect(*effect))
             alDeleteEffects(1, effect);
-        return NULL;
     }
-
-    return effect;
 }
 
 
 void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
+    ALuint effect;
 
     // Position par rapport au joueur : (0, 0, 0) puisque c'est lui qui l'émet
     alSource3f(source, AL_POSITION, 0, 0, 0);
 
     // Charger le reverb dans un effet
-    ALuint* effect = createEffectWithReverb(reverb);
+    createEffectWithReverb(&effect, reverb);
 
     // On crée le slot, qui va connecter l'effet et la source
     ALuint slot = 0;
     alGenAuxiliaryEffectSlots(1, &slot);
 
     // On affecte l'effet et la source au slot
-    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) *effect);
+    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) effect);
     alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, 0);
 
     play(source);
 
-    alSource3i(source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, 0);
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, AL_FILTER_NULL);
 
     alDeleteAuxiliaryEffectSlots(1, &slot);
     alDeleteEffects(1, &effect);
@@ -280,7 +276,7 @@ void setOrientation(int value) {
 }
 
 void closeOpenAL(ALuint* source, ALuint* buffer) {
-    alSourceUnqueueBuffer(*source, 1, buffer);
+    alSourceUnqueueBuffers(*source, 1, buffer);
     alDeleteBuffers(1, buffer);
     alDeleteSources(1, source);
     ALCcontext* context = alcGetCurrentContext();

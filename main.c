@@ -18,7 +18,7 @@ void runner(int** maze, t_position player, t_position exit) {
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 
     // FIXME: touche quitter Q
-    while (!(event.type == SDL_SCANCODE_Q || (player.x == exit.x && player.y == exit.y))) {
+    while (!(currentKeyStates[SDL_SCANCODE_RETURN] || (player.x == exit.x && player.y == exit.y))) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
         
@@ -57,8 +57,8 @@ void runner(int** maze, t_position player, t_position exit) {
         reverb.flReflectionsPan[2] = (float) (d.est-d.ouest)/SIZE;
 
         printf("Coordonnées joueur : x:%d y:%d d:%d\n", player.x, player.y, player.d);
-        printf("reflexionPan Sud-Nord:%lf\n", reverb.flReflectionsPan[0]);
-        printf("reflexionPan Est-Ouest:%lf\n\n", reverb.flReflectionsPan[2]);
+        printf("reflexionPan Sud-Nord : %lf\n", reverb.flReflectionsPan[0]);
+        printf("reflexionPan Est-Ouest : %lf\n\n", reverb.flReflectionsPan[2]);
         
         // On joue le son avec le reverb approprié
         playSourceWithReverb(source, reverb);
