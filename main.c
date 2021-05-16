@@ -77,11 +77,14 @@ void runner(int** maze, t_position player, t_position exit) {
         } else if (currentKeyStates[SDL_SCANCODE_LEFT]) {
             
             if (player.d == NORD)
-                player.d == OUEST;
+                player.d = OUEST;
+                
             else if (player.d == OUEST)
                 player.d = SUD;
+
             else if (player.d == SUD)
                 player.d = EST;
+
             else
                 player.d = NORD;
 
@@ -90,11 +93,14 @@ void runner(int** maze, t_position player, t_position exit) {
         } else if (currentKeyStates[SDL_SCANCODE_RIGHT]) {
             
             if (player.d == NORD)
-                player.d == EST;
+                player.d = EST;
+
             else if (player.d == EST)
                 player.d = SUD;
+
             else if (player.d == SUD)
                 player.d = OUEST;
+                
             else
                 player.d = NORD;
                 
