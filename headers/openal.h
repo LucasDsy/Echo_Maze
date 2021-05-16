@@ -253,25 +253,25 @@ void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
 }
 
 
-void setOrientation(int value) {
+void setOrientation(direction d) {
     ALCenum error;
     ALfloat orientation[6] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
-    switch (value) {
-        case 1:
-            orientation[2] = 1.0f;
+    switch (d) {
+        case NORD:
+            orientation[2] = -1.0f;
             break;
 
-        case 2:
-            orientation[0] = 1.0f;
-            break;
-
-        case 3:
+        case OUEST:
             orientation[0] = -1.0f;
             break;
 
-        case 4:
-            orientation[2] = -1.0f;
+        case EST:
+            orientation[0] = 1.0f;
+            break;
+
+        case SUD:
+            orientation[2] = 1.0f;
             break;
     }
 
