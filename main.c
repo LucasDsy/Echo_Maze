@@ -52,7 +52,7 @@ void runner(int** maze, t_position player, t_position exit) {
     static const Uint8 *currentKeyStates = NULL;
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    while (!(currentKeyStates[SDL_SCANCODE_RETURN] || (player.x == exit.x && player.y == exit.y))) {
+    while (!currentKeyStates[SDL_SCANCODE_RETURN] && !(player.x == exit.x && player.y == exit.y))) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
 
@@ -128,8 +128,8 @@ int main() {
 
     // Initialisation position sortie
     t_position exit;
-	exit.x = 14;
-	exit.y = 13;
+	exit.x = 13;
+	exit.y = 14;
 
     movePlayer(maze, SIZE, player);
     runner(maze, player, exit);
