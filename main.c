@@ -16,8 +16,8 @@ void action(int** maze, t_position player) {
     // On bouge visuellement le joueur à sa nouvelle position
     movePlayer(maze, SIZE, player);
 
-    // On rectifie la position du joueur
-    setPosition(player.d);
+    // On rectifie l'orientation du joueur
+    setOrientation(player.d);
 
     // On va chercher la distance entre le joueur et chaque mur
     distances d = distancesToWall(maze, player);

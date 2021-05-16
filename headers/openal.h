@@ -173,9 +173,9 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     // On définit l'unité de distance
     alListenerf(AL_METERS_PER_UNIT, 0.3f);
 
-    // On définit la position du listener
-    ALfloat position[3] = { 0.0f, 0.0f, 0.0f };
-    alListenerfv(AL_POSITION, position);
+    // On définit l'orientation du listener
+    ALfloat orientation[6] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f }; // SUD par défaut
+    alListenerfv(AL_ORIENTATION, orientation);
 
     play(*source);
 
@@ -253,29 +253,29 @@ void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
 }
 
 
-void setPosition(direction d) {
+void setOrientation(direction d) {
     ALCenum error;
-    ALfloat position[3] = { 0.0f, 0.0f, 0.0f };
+    ALfloat orientation[6] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f };
 
     switch (d) {
         case NORD:
-            position[2] = 1.0f;
+            orientation[2] = -1.0f;
             break;
 
         case OUEST:
-            position[0] = 1.0f;
+            orientation[0] = -1.0f;
             break;
 
         case EST:
-            position[0] = -1.0f;
+            orientation[0] = 1.0f;
             break;
 
         case SUD:
-            position[2] = -1.0f;
+            orientation[2] = 1.0f;
             break;
     }
 
-    alListenerfv(AL_POSITION, position);
+    alListenerfv(AL_ORIENTATION, orientation);
 
     error = alGetError();
     if (error != AL_NO_ERROR) {
