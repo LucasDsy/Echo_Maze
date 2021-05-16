@@ -88,18 +88,31 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
 void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) {
     ALCenum error;
     ALCint iSends = 0;
+    ALint attribs[4] = {0};
 
     ALCdevice* device = alcOpenDevice(NULL);
 
-    if (device) {
-        ALCcontext* context = alcCreateContext(device, NULL);
-        alcMakeContextCurrent(context);
+    if (!device) {
+        printf("Failed to create device\n");
+        return;
     }
 
     if (alcIsExtensionPresent(device, "ALC_EXT_EFX") == AL_FALSE) {
         printf("Initialization failure : EFX Extension not found\n");
         return;
     }
+
+    attribs[0] = ALC_MAX_AUXILIARY_SENDS;
+    attribs[1] = 4;
+
+    ALCcontext* context = alcCreateContext(device, NULL);
+
+    if (!context) {
+        printf("Failed to create context\n");
+        return;
+    }
+
+    alcMakeContextCurrent(context);
 
     /* Retrieve the actual number of Aux Sends */
     /* available on each Source */
@@ -133,6 +146,9 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTFV, alGetAuxiliaryEffectSlotfv);
 #undef LOAD_PROC
 
+    aluInit(0, NULL);
+
+    // clear error code
     alGetError();
     
     // On génère le buffer
