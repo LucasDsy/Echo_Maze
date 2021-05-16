@@ -22,21 +22,17 @@ void action(int** maze, t_position player) {
     // On va chercher la distance entre le joueur et chaque mur
     distances d = distancesToWall(maze, player);
 
-    // On va chercher le rapport mur / vide
-    double ratio = rapportMurVide(maze, player);
-
     // On modifie le reverb en conséquence
     float yReverb = (float) (d.sud-d.nord)/SIZE;
     float xReverb = (float) (d.est-d.ouest)/SIZE;
 
-    reverb.flReflectionsPan[0] = xReverb;
-    reverb.flReflectionsPan[2] = yReverb;
+    reverb.flReflectionsPan[0] = xReverb  * 1.1f;
+    reverb.flReflectionsPan[2] = yReverb * 1.1f;
     reverb.flLateReverbPan[0] = (float) xReverb * 1.5f;
     reverb.flLateReverbPan[2] = (float) yReverb * 1.5f;
-    reverb.flDecayTime = (float) fabs((xReverb+yReverb) * 10.0) + 0.5;
+    reverb.flDecayTime = ((float) (d.nord + d.sud + d.est + d.ouest) * 20.0 / SIZE) + 0.1;
 
     printf("Coordonnées joueur : x:%d y:%d d:%d\n", player.x, player.y, player.d);
-    printf("ratio : %lf\n", ratio);
     printf("reflexionPan Sud-Nord : %lf\n", reverb.flReflectionsPan[0]);
     printf("reflexionPan Est-Ouest : %lf\n", reverb.flReflectionsPan[2]);
     printf("reflexionPan tardive axe X : %lf\n", reverb.flLateReverbPan[0]);
@@ -54,7 +50,7 @@ void runner(int** maze, t_position player, t_position exit) {
     static const Uint8 *currentKeyStates = NULL;
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    while (!(currentKeyStates[SDL_SCANCODE_RETURN] || (player.x == exit.x && player.y == exit.y))) {
+    while (!(currentKeyStates[SDL_SCANCODE_RETURN]) && !(player.x == exit.x && player.y == exit.y)) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
         
@@ -104,8 +100,8 @@ int main() {
 
     // Initialisation position sortie
     t_position exit;
-	exit.x = 14;
-	exit.y = 13;
+	exit.x = 13;
+	exit.y = 14;
 
     movePlayer(maze, SIZE, player);
     runner(maze, player, exit);

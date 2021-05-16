@@ -43,7 +43,7 @@ distances distancesToWall(int** maze, t_position player) {
     while (i < SIZE && maze[i][j] != 0)
         i++;
 
-    d.est = i - player.x;
+    d.est = i - player.x - 1;
 
 
     // Distance ouest
@@ -53,7 +53,7 @@ distances distancesToWall(int** maze, t_position player) {
     while (i > 0 && maze[i][j] != 0)
         i--;
 
-    d.ouest = player.x - i;
+    d.ouest = player.x - i - 1;
 
 
     // Distance nord
@@ -63,7 +63,7 @@ distances distancesToWall(int** maze, t_position player) {
     while (j > 0 && maze[i][j] != 0)
         j--;
 
-    d.nord = player.y - j;
+    d.nord = player.y - j - 1;
 
 
     // Distance sud
@@ -73,72 +73,27 @@ distances distancesToWall(int** maze, t_position player) {
     while (j < SIZE && maze[i][j] != 0)
         j++;
 
-    d.sud = j - player.y;
-
-    return d;
-}
+    d.sud = j - player.y - 1;
 
 
-double rapportMurVide(int** maze, t_position player) {
-    int i = player.x;
-    int j = player.y;
-    double nbMurs, nbVide;
-
+    // On supprime la distance au dos du joueur
     switch (player.d) {
-        case OUEST:
-            i--;
-            while (i >= 0) {
-                if (maze[i][j] == 0)
-                    nbMurs++;
-                else
-                    nbVide++;
-                    
-                i--;
-            }
-            break;
-
-        case EST:
-            i++;
-            while (i < SIZE) {
-                if (maze[i][j] == 0)
-                    nbMurs++;
-                else
-                    nbVide++;
-
-                i++;
-            }
-            break;
-
         case NORD:
-            j--;
-            while (j >= 0) {
-                if (maze[i][j] == 0)
-                    nbMurs++;
-                else
-                    nbVide++;
-                    
-                j--;
-            }
+            d.sud = 0;
             break;
 
         case SUD:
-            j++;
-            while (j < SIZE) {
-                if (maze[i][j] == 0)
-                    nbMurs++;
-                else
-                    nbVide++;
-                    
-                j++;
-            }
+            d.nord = 0;
             break;
 
-        default:
-            return 0.0;
+        case EST:
+            d.ouest = 0;
+            break;
+
+        case OUEST:
+            d.est = 0;
+            break;
     }
 
-    printf("nbVide : %lf\n", nbVide);
-    printf("nbMurs : %lf\n", nbMurs);
-
-    return nbVide / nbMurs;
+    return d;
 }

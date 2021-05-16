@@ -3,7 +3,6 @@
 #define H_TYPES
 
 typedef enum {
-    INCONNUE = 0,
     NORD = 1,
     OUEST = 2,
     EST = 3,
