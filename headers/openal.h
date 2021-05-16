@@ -88,7 +88,6 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
 void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) {
     ALCenum error;
     ALCint iSends = 0;
-    ALint attribs[4] = {0};
 
     ALCdevice* device = alcOpenDevice(NULL);
 
@@ -101,9 +100,6 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
         printf("Initialization failure : EFX Extension not found\n");
         return;
     }
-
-    attribs[0] = ALC_MAX_AUXILIARY_SENDS;
-    attribs[1] = 4;
 
     ALCcontext* context = alcCreateContext(device, NULL);
 
@@ -146,7 +142,7 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     LOAD_PROC(LPALGETAUXILIARYEFFECTSLOTFV, alGetAuxiliaryEffectSlotfv);
 #undef LOAD_PROC
 
-    aluInit(0, NULL);
+    alutInit(0, NULL);
 
     // clear error code
     alGetError();
