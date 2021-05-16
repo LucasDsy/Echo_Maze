@@ -60,7 +60,7 @@ void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
     reverb->flGain = 0.3162f;
     reverb->flGainHF = 0.8913f;
     reverb->flGainLF = 1.0000f;
-    reverb->flDecayTime = 10.0f;
+    reverb->flDecayTime = 0.0f;
     reverb->flDecayHFRatio = 0.8300f;
     reverb->flDecayLFRatio = 1.0000f;
     reverb->flReflectionsGain = 0.0500f;
