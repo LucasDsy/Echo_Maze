@@ -174,7 +174,7 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     alListenerf(AL_METERS_PER_UNIT, 0.3f);
 
     // On définit l'orientation du listener
-    ALfloat orientation[6] = { 0.0, 0.0, 1.0, 0.0, 0.0, 0.0 }; // SUD par défaut
+    ALfloat orientation[6] = { 0.0, 0.0, -1.0, 0.0, 0.0, 0.0 }; // SUD par défaut
     alListenerfv(AL_ORIENTATION, orientation);
 
     play(*source);
@@ -259,19 +259,19 @@ void setOrientation(int value) {
 
     switch (value) {
         case 1:
-            orientation[2] = -1.0f;
+            orientation[2] = 1.0f;
             break;
 
         case 2:
-            orientation[0] = -1.0f;
-            break;
-
-        case 3:
             orientation[0] = 1.0f;
             break;
 
+        case 3:
+            orientation[0] = -1.0f;
+            break;
+
         case 4:
-            orientation[2] = 1.0f;
+            orientation[2] = -1.0f;
             break;
     }
 
