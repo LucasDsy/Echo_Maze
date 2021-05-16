@@ -16,8 +16,8 @@ void action(int** maze, t_position player) {
     // On bouge visuellement le joueur à sa nouvelle position
     movePlayer(maze, SIZE, player);
 
-    // On rectifie l'orientation du joueur
-    setOrientation((int) player.d);
+    // On rectifie la position du joueur
+    setPosition(player.d);
 
     // On va chercher la distance entre le joueur et chaque mur
     distances d = distancesToWall(maze, player);
@@ -52,7 +52,7 @@ void runner(int** maze, t_position player, t_position exit) {
     static const Uint8 *currentKeyStates = NULL;
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    while (!currentKeyStates[SDL_SCANCODE_RETURN] && !(player.x == exit.x && player.y == exit.y))) {
+    while (!currentKeyStates[SDL_SCANCODE_RETURN] && !(player.x == exit.x && player.y == exit.y)) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
 
