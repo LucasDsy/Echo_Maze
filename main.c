@@ -57,28 +57,47 @@ void runner(int** maze, t_position player, t_position exit) {
     while (!(currentKeyStates[SDL_SCANCODE_RETURN] || (player.x == exit.x && player.y == exit.y))) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
+
+        if (currentKeyStates[SDL_SCANCODE_UP]) {
         
-		if (currentKeyStates[SDL_SCANCODE_UP] && maze[player.x][player.y - 1]) {
-            player.y = MAX(0, player.y - 1);
-            player.d = NORD;
-            action(maze, player);
-        }
+            if (player.d == NORD && maze[player.x][player.y - 1])
+                player.y = MAX(0, player.y - 1);
 
-		else if (currentKeyStates[SDL_SCANCODE_DOWN] && maze[player.x][player.y + 1]) {
-			player.y = MIN(SIZE - 1, player.y + 1);
-            player.d = SUD;
-            action(maze, player);
-        }
+            else if (player.d == EST && maze[player.x + 1][player.y])
+                player.x = MIN(SIZE - 1, player.x + 1);
 
-		else if (currentKeyStates[SDL_SCANCODE_LEFT] && maze[player.x - 1][player.y]) {
-			player.x = MAX(0, player.x - 1);
-            player.d = OUEST;
-            action(maze, player);
-        }
+            else if (player.d == OUEST && maze[player.x - 1][player.y])
+                player.x = MAX(0, player.x - 1);
 
-		else if (currentKeyStates[SDL_SCANCODE_RIGHT] && maze[player.x + 1][player.y]) {
-			player.x = MIN(SIZE - 1, player.x + 1);
-            player.d = EST;
+            else if (player.d == SUD && maze[player.x][player.y + 1])
+                player.y = MIN(SIZE - 1, player.y + 1);
+
+            action(maze, player);
+        
+        } else if (currentKeyStates[SDL_SCANCODE_LEFT]) {
+            
+            if (player.d == NORD)
+                player.d == OUEST;
+            else if (player.d == OUEST)
+                player.d = SUD;
+            else if (player.d == SUD)
+                player.d = EST;
+            else
+                player.d = NORD;
+
+            action(maze, player);
+        
+        } else if (currentKeyStates[SDL_SCANCODE_RIGHT]) {
+            
+            if (player.d == NORD)
+                player.d == EST;
+            else if (player.d == EST)
+                player.d = SUD;
+            else if (player.d == SUD)
+                player.d = OUEST;
+            else
+                player.d = NORD;
+                
             action(maze, player);
         }
     }
