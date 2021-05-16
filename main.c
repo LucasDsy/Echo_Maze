@@ -32,13 +32,13 @@ void action(int** maze, t_position player) {
     if (player.d == EST) {
         float tmp = yPan;
         yPan = -xPan;
-        xPan = -tmp;
+        xPan = tmp;
     }
 
     if (player.d == OUEST) {
         float tmp = yPan;
         yPan = -xPan;
-        xPan = tmp;
+        xPan = -tmp;
     }
 
     reverb.flReflectionsPan[0] = xPan;
