@@ -7,6 +7,7 @@
 
 // OpenAL global variables
 ALuint source;
+ALuint buffer;
 EFXEAXREVERBPROPERTIES reverb;
 
 
@@ -16,6 +17,7 @@ void runner(int** maze, t_position player, t_position exit) {
     static const Uint8 *currentKeyStates = NULL;
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 
+    // FIXME: touche quitter Q
     while (!(event.type == SDL_QUIT || (player.x == exit.x && player.y == exit.y))) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
@@ -38,6 +40,7 @@ void runner(int** maze, t_position player, t_position exit) {
 		else if (currentKeyStates[SDL_SCANCODE_RIGHT] && maze[player.x + 1][player.y]) {
 			player.x = MIN(SIZE - 1, player.x + 1);
             player.d = EST;
+        
         }
 		
         // On bouge le joueur à sa nouvelle position
@@ -64,29 +67,28 @@ void runner(int** maze, t_position player, t_position exit) {
 
 
 int main() {
+
+    // Initialisation labyrinthe
     int** maze = readMaze();
 
-    //OpenAL
-    initOpenAL(&source);
-    initReverb(&reverb);
+    // Initialisation OpenAL
+    initOpenAL(&buffer, &source, &reverb);
 
-
-    // SDL
+    // Initialisation SDL
     initSDL(SIZE);
     initGrid(maze, SIZE);
     
+    // Initialisation position joueur
     t_position player;
 	player.x = 0;
 	player.y = 0;
 
+    // Initialisation position sortie
     t_position exit;
 	exit.x = 14;
 	exit.y = 13;
 
     movePlayer(maze, SIZE, player);
-
-    printf("\ntest\n\n");
-
     runner(maze, player, exit);
 
     closeOpenAL();

@@ -9,7 +9,7 @@
 #include <AL/efx-presets.h>
 #include "types.h"
 
-#define AUDIONAME "../utils/beep.wav"
+#define AUDIONAME "./utils/beep.wav"
 
 /* Effect object functions */
 static LPALGENEFFECTS alGenEffects;
@@ -38,12 +38,12 @@ static LPALGETAUXILIARYEFFECTSLOTF alGetAuxiliaryEffectSlotf;
 static LPALGETAUXILIARYEFFECTSLOTFV alGetAuxiliaryEffectSlotfv;
 
 
-ALvoid DisplayALError(char * text, ALint errorcode) {
+ALvoid DisplayALError(char*text, ALint errorcode) {
     printf("%s%s", text, alGetString(errorcode));
 }
 
 
-void initReverb(EFXEAXREVERBPROPERTIES * reverb) {
+void initReverb(EFXEAXREVERBPROPERTIES*reverb) {
     reverb->flDensity = 1.0000f;
     reverb->flDiffusion = 1.0000f;
     reverb->flGain = 0.3162f;
@@ -74,7 +74,7 @@ void initReverb(EFXEAXREVERBPROPERTIES * reverb) {
 }
 
 
-void initOpenAL(ALuint* source) {
+void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) {
     ALCenum error;
     ALCint iSends = 0;
 
@@ -125,7 +125,8 @@ void initOpenAL(ALuint* source) {
     alGetError();
     
     // On génère le buffer
-    ALuint buffer = alutCreateBufferFromFile(AUDIONAME);
+    // FIXME: génération buffer & lecture fichier
+    buffer = alutCreateBufferFromFile(AUDIONAME);
 
     if ((error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alGenBuffers :", error);
@@ -136,86 +137,106 @@ void initOpenAL(ALuint* source) {
     alGenSources(1, source);
 
     if ((error = alGetError()) != AL_NO_ERROR) {
-        DisplayALError("alGenSources 1 : ", error);
+        DisplayALError("alGenSources : ", error);
         return;
     }
 
     // On charge le buffer dans la source
     alSourcei(*source, AL_BUFFER, (ALint) buffer);
 
+    // On définit l'unité de distance
+    alListenerf(AL_METERS_PER_UNIT, 0.3f);
+
+    if (alGetError() == AL_NO_ERROR)
+        printf("Successfully set distance units\n");
+
     // On définit l'orientation du listener
     ALfloat orientation[6] = { 0.0, 0.0, -1.0, 0.0, 0.0, 0.0 }; // Nord par défaut
     alListenerfv(AL_ORIENTATION, orientation);
 
-    alSourcePlay(*source);
+    play(source);
+
+    initReverb(reverb);
 }
 
 
-void loadEffectWithReverb(ALuint * effect, const EFXEAXREVERBPROPERTIES reverb) {
+ALuint* createEffectWithReverb(const EFXEAXREVERBPROPERTIES reverb) {
     ALCenum error;
-    * effect = 0;
+    ALuint* effect = NULL;
 
-    // On crée l'objet effet
+    // On crée l'effet
     alGenEffects(1, effect);
 
     // On s'assure que EAXREVERB est dispo et on applique les paramètres reverb
     if (alGetEnumValue("AL_EFFECT_EAXREVERB") != 0) {
-        alEffecti( * effect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
-        alEffectf( * effect, AL_EAXREVERB_DENSITY, reverb.flDensity);
-        alEffectf( * effect, AL_EAXREVERB_DIFFUSION, reverb.flDiffusion);
-        alEffectf( * effect, AL_EAXREVERB_GAIN, reverb.flGain);
-        alEffectf( * effect, AL_EAXREVERB_GAINHF, reverb.flGainHF);
-        alEffectf( * effect, AL_EAXREVERB_GAINLF, reverb.flGainLF);
-        alEffectf( * effect, AL_EAXREVERB_DECAY_TIME, reverb.flDecayTime);
-        alEffectf( * effect, AL_EAXREVERB_DECAY_HFRATIO, reverb.flDecayHFRatio);
-        alEffectf( * effect, AL_EAXREVERB_DECAY_LFRATIO, reverb.flDecayLFRatio);
-        alEffectf( * effect, AL_EAXREVERB_REFLECTIONS_GAIN, reverb.flReflectionsGain);
-        alEffectf( * effect, AL_EAXREVERB_REFLECTIONS_DELAY, reverb.flReflectionsDelay);
-        alEffectfv( * effect, AL_EAXREVERB_REFLECTIONS_PAN, reverb.flReflectionsPan);
-        alEffectf( * effect, AL_EAXREVERB_LATE_REVERB_GAIN, reverb.flLateReverbGain);
-        alEffectf( * effect, AL_EAXREVERB_LATE_REVERB_DELAY, reverb.flLateReverbDelay);
-        alEffectfv( * effect, AL_EAXREVERB_LATE_REVERB_PAN, reverb.flLateReverbPan);
-        alEffectf( * effect, AL_EAXREVERB_ECHO_TIME, reverb.flEchoTime);
-        alEffectf( * effect, AL_EAXREVERB_ECHO_DEPTH, reverb.flEchoDepth);
-        alEffectf( * effect, AL_EAXREVERB_MODULATION_TIME, reverb.flModulationTime);
-        alEffectf( * effect, AL_EAXREVERB_MODULATION_DEPTH, reverb.flModulationDepth);
-        alEffectf( * effect, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, reverb.flAirAbsorptionGainHF);
-        alEffectf( * effect, AL_EAXREVERB_HFREFERENCE, reverb.flHFReference);
-        alEffectf( * effect, AL_EAXREVERB_LFREFERENCE, reverb.flLFReference);
-        alEffectf( * effect, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, reverb.flRoomRolloffFactor);
-        alEffecti( * effect, AL_EAXREVERB_DECAY_HFLIMIT, reverb.iDecayHFLimit);
+        alEffecti(*effect, AL_EFFECT_TYPE, AL_EFFECT_EAXREVERB);
+        alEffectf(*effect, AL_EAXREVERB_DENSITY, reverb.flDensity);
+        alEffectf(*effect, AL_EAXREVERB_DIFFUSION, reverb.flDiffusion);
+        alEffectf(*effect, AL_EAXREVERB_GAIN, reverb.flGain);
+        alEffectf(*effect, AL_EAXREVERB_GAINHF, reverb.flGainHF);
+        alEffectf(*effect, AL_EAXREVERB_GAINLF, reverb.flGainLF);
+        alEffectf(*effect, AL_EAXREVERB_DECAY_TIME, reverb.flDecayTime);
+        alEffectf(*effect, AL_EAXREVERB_DECAY_HFRATIO, reverb.flDecayHFRatio);
+        alEffectf(*effect, AL_EAXREVERB_DECAY_LFRATIO, reverb.flDecayLFRatio);
+        alEffectf(*effect, AL_EAXREVERB_REFLECTIONS_GAIN, reverb.flReflectionsGain);
+        alEffectf(*effect, AL_EAXREVERB_REFLECTIONS_DELAY, reverb.flReflectionsDelay);
+        alEffectfv(*effect, AL_EAXREVERB_REFLECTIONS_PAN, reverb.flReflectionsPan);
+        alEffectf(*effect, AL_EAXREVERB_LATE_REVERB_GAIN, reverb.flLateReverbGain);
+        alEffectf(*effect, AL_EAXREVERB_LATE_REVERB_DELAY, reverb.flLateReverbDelay);
+        alEffectfv(*effect, AL_EAXREVERB_LATE_REVERB_PAN, reverb.flLateReverbPan);
+        alEffectf(*effect, AL_EAXREVERB_ECHO_TIME, reverb.flEchoTime);
+        alEffectf(*effect, AL_EAXREVERB_ECHO_DEPTH, reverb.flEchoDepth);
+        alEffectf(*effect, AL_EAXREVERB_MODULATION_TIME, reverb.flModulationTime);
+        alEffectf(*effect, AL_EAXREVERB_MODULATION_DEPTH, reverb.flModulationDepth);
+        alEffectf(*effect, AL_EAXREVERB_AIR_ABSORPTION_GAINHF, reverb.flAirAbsorptionGainHF);
+        alEffectf(*effect, AL_EAXREVERB_HFREFERENCE, reverb.flHFReference);
+        alEffectf(*effect, AL_EAXREVERB_LFREFERENCE, reverb.flLFReference);
+        alEffectf(*effect, AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, reverb.flRoomRolloffFactor);
+        alEffecti(*effect, AL_EAXREVERB_DECAY_HFLIMIT, reverb.iDecayHFLimit);
     }
 
     // Gestion des erreurs
     error = alGetError();
     if (error != AL_NO_ERROR) {
         fprintf(stderr, "OpenAL error: %s\n", alGetString(error));
-        if (alIsEffect( * effect))
+        if (alIsEffect(*effect))
             alDeleteEffects(1, effect);
-        return;
+        return NULL;
     }
+
+    return effect;
 }
 
 
 void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
-    ALuint effect, slot;
-    ALenum state;
 
     // Position par rapport au joueur : (0, 0, 0) puisque c'est lui qui l'émet
     alSource3f(source, AL_POSITION, 0, 0, 0);
 
     // Charger le reverb dans un effet
-    loadEffectWithReverb(&effect, reverb);
+    ALuint* effect = createEffectWithReverb(reverb);
 
     // On crée le slot, qui va connecter l'effet et la source
-    slot = 0;
+    ALuint slot = 0;
     alGenAuxiliaryEffectSlots(1, &slot);
 
     // On affecte l'effet et la source au slot
     alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) effect);
-    alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, AL_FILTER_NULL);
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, NULL);
 
+    play(source);
+
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, NULL);
+
+    alDeleteAuxiliaryEffectSlots(1, &slot);
+    alDeleteEffects(1, &effect);
+}
+
+
+void play(ALuint source) {
     alSourcePlay(source);
+
+    ALenum state;
     alGetSourcei(source, AL_SOURCE_STATE, &state);
 
     while (alGetError() == AL_NO_ERROR && state == AL_PLAYING)
@@ -257,7 +278,10 @@ void setOrientation(int value) {
     }
 }
 
-void closeOpenAL() {
+void closeOpenAL(ALuint* source, ALuint* buffer) {
+    alSourceUnqueueBuffer(*source, 1, buffer);
+    alDeleteBuffers(1, buffer);
+    alDeleteSources(1, source);
     ALCcontext* context = alcGetCurrentContext();
     ALCdevice* device = alcGetContextsDevice(context);
     alcMakeContextCurrent(NULL);
