@@ -9,7 +9,7 @@
 #include <AL/efx-presets.h>
 #include "types.h"
 
-#define AUDIONAME "./utils/beep.wav"
+#define AUDIONAME "./utils/clac.wav"
 
 /* Effect object functions */
 static LPALGENEFFECTS alGenEffects;

@@ -17,7 +17,6 @@ void runner(int** maze, t_position player, t_position exit) {
     static const Uint8 *currentKeyStates = NULL;
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    // FIXME: touche quitter Q
     while (!(currentKeyStates[SDL_SCANCODE_RETURN] || (player.x == exit.x && player.y == exit.y))) {
 		SDL_WaitEvent(&event);
 		SDL_PumpEvents();
