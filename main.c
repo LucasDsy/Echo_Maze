@@ -13,7 +13,7 @@ EFXEAXREVERBPROPERTIES reverb;
 
 
 void action(int** maze, t_position player) {
-    // On bouge le joueur à sa nouvelle position
+    // On bouge visuellement le joueur à sa nouvelle position
     movePlayer(maze, SIZE, player);
 
     // On rectifie l'orientation du joueur

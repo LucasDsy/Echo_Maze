@@ -273,9 +273,6 @@ void setOrientation(int value) {
         case 4:
             orientation[2] = 1.0f;
             break;
-
-        default:
-            break;
     }
 
     alListenerfv(AL_ORIENTATION, orientation);
