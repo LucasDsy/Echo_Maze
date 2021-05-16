@@ -100,7 +100,7 @@ void runner(int** maze, t_position player, t_position exit) {
 
             else if (player.d == SUD)
                 player.d = OUEST;
-                
+
             else
                 player.d = NORD;
                 
@@ -126,6 +126,7 @@ int main() {
     t_position player;
 	player.x = 0;
 	player.y = 0;
+    player.d = SUD;
 
     // Initialisation position sortie
     t_position exit;
