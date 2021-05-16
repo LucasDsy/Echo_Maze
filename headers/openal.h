@@ -282,6 +282,9 @@ void setOrientation(direction d) {
         DisplayALError("alListenerfv POSITION : ", error);
         return;
     }
+
+    alGetListenerfv(AL_ORIENTATION, orientation);
+    printf("%f %f %f %f %f %f", orientation[0], orientation[1], orientation[2], orientation[3], orientation[4], orientation[5]);
 }
 
 void closeOpenAL(ALuint* source, ALuint* buffer) {

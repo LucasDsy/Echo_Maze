@@ -23,8 +23,10 @@ void action(int** maze, t_position player) {
     distances d = distancesToWall(maze, player);
 
     // On modifie le reverb en conséquence
-    float yReverb = (float) (d.sud-d.nord)/SIZE;
-    float xReverb = (float) (d.est-d.ouest)/SIZE;
+    float yCoeff = (float) (d.sud-d.nord)/SIZE;
+    float xCoeff = (float) (d.est-d.ouest)/SIZE;
+
+    float yReverb = 
 
     reverb.flReflectionsPan[0] = xReverb;
     reverb.flReflectionsPan[2] = yReverb;
