@@ -37,7 +37,7 @@ void action(int** maze, t_position player) {
 
     if (player.d == OUEST) {
         float tmp = yPan;
-        yPan = xPan;
+        yPan = -xPan;
         xPan = tmp;
     }
 
