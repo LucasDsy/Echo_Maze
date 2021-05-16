@@ -23,18 +23,31 @@ void action(int** maze, t_position player) {
     distances d = distancesToWall(maze, player);
 
     // On modifie le reverb en conséquence
-    float yCoeff = (float) (d.sud-d.nord)/SIZE;
-    float xCoeff = (float) (d.est-d.ouest)/SIZE;
+    float yPan = (float) (d.sud-d.nord)/SIZE;
+    float xPan = (float) (d.est-d.ouest)/SIZE;
 
-    float yReverb = 
+    if (player.d == SUD)
+        yPan = -yPan;
 
-    reverb.flReflectionsPan[0] = xReverb;
-    reverb.flReflectionsPan[2] = yReverb;
-    reverb.flLateReverbPan[0] = (float) xReverb * 1.5f;
-    reverb.flLateReverbPan[2] = (float) yReverb * 1.5f;
+    if (player.d == EST) {
+        float tmp = yPan;
+        yPan = -xPan;
+        xCoeff = yPan;
+    }
+
+    if (player.d == OUEST) {
+        float tmp = yPan;
+        yPan = xPan;
+        xPan = yPan;
+    }
+
+    reverb.flReflectionsPan[0] = xPan;
+    reverb.flReflectionsPan[2] = yPan;
+    reverb.flLateReverbPan[0] = (float) xPan * 1.5f;
+    reverb.flLateReverbPan[2] = (float) yPan * 1.5f;
     
     // On ajoute du délai en fonction des coeffdistances
-    reverb.flDecayTime = (float) fabs((xReverb+yReverb) * 10.0) + 0.5;
+    reverb.flDecayTime = (float) fabs((xPan+yPan) * 10.0) + 0.5;
 
     printf("Coordonnées joueur : x:%d y:%d d:%d\n", player.x, player.y, player.d);
     printf("reflexionPan Sud-Nord : %lf\n", reverb.flReflectionsPan[0]);
