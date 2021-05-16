@@ -17,13 +17,10 @@ void action(int** maze, t_position player) {
     movePlayer(maze, SIZE, player);
 
     // On rectifie l'orientation du joueur
-    //setOrientation((int)player.d);
+    setOrientation((int) player.d);
 
     // On va chercher la distance entre le joueur et chaque mur
     distances d = distancesToWall(maze, player);
-
-    // On va chercher le rapport mur / vide
-    double ratio = rapportMurVide(maze, player);
 
     // On modifie le reverb en conséquence
     float yReverb = (float) (d.sud-d.nord)/SIZE;
@@ -33,10 +30,11 @@ void action(int** maze, t_position player) {
     reverb.flReflectionsPan[2] = yReverb;
     reverb.flLateReverbPan[0] = (float) xReverb * 1.5f;
     reverb.flLateReverbPan[2] = (float) yReverb * 1.5f;
+    
+    // On ajoute du délai en fonction des coeffdistances
     reverb.flDecayTime = (float) fabs((xReverb+yReverb) * 10.0) + 0.5;
 
     printf("Coordonnées joueur : x:%d y:%d d:%d\n", player.x, player.y, player.d);
-    printf("ratio : %lf\n", ratio);
     printf("reflexionPan Sud-Nord : %lf\n", reverb.flReflectionsPan[0]);
     printf("reflexionPan Est-Ouest : %lf\n", reverb.flReflectionsPan[2]);
     printf("reflexionPan tardive axe X : %lf\n", reverb.flLateReverbPan[0]);
