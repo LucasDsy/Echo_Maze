@@ -91,7 +91,7 @@ int main() {
     movePlayer(maze, SIZE, player);
     runner(maze, player, exit);
 
-    closeOpenAL();
+    closeOpenAL(&source, &buffer);
     
     return EXIT_SUCCESS;
 }

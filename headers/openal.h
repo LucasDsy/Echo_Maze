@@ -43,7 +43,18 @@ ALvoid DisplayALError(char*text, ALint errorcode) {
 }
 
 
-void initReverb(EFXEAXREVERBPROPERTIES*reverb) {
+void play(ALuint source) {
+    alSourcePlay(source);
+
+    ALenum state;
+    alGetSourcei(source, AL_SOURCE_STATE, &state);
+
+    while (alGetError() == AL_NO_ERROR && state == AL_PLAYING)
+        alGetSourcei(source, AL_SOURCE_STATE, &state);
+}
+
+
+void initReverb(EFXEAXREVERBPROPERTIES* reverb) {
     reverb->flDensity = 1.0000f;
     reverb->flDiffusion = 1.0000f;
     reverb->flGain = 0.3162f;
@@ -126,7 +137,7 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     
     // On génère le buffer
     // FIXME: génération buffer & lecture fichier
-    buffer = alutCreateBufferFromFile(AUDIONAME);
+    *buffer = alutCreateBufferFromFile(AUDIONAME);
 
     if ((error = alGetError()) != AL_NO_ERROR) {
         DisplayALError("alGenBuffers :", error);
@@ -142,7 +153,8 @@ void initOpenAL(ALuint* buffer, ALuint* source, EFXEAXREVERBPROPERTIES* reverb) 
     }
 
     // On charge le buffer dans la source
-    alSourcei(*source, AL_BUFFER, (ALint) buffer);
+    // alSourcei(*source, AL_BUFFER, (ALint) *buffer);
+    alSourceQueueBuffers(*source, 1, *buffer);
 
     // On définit l'unité de distance
     alListenerf(AL_METERS_PER_UNIT, 0.3f);
@@ -221,26 +233,15 @@ void playSourceWithReverb(ALuint source, EFXEAXREVERBPROPERTIES reverb) {
     alGenAuxiliaryEffectSlots(1, &slot);
 
     // On affecte l'effet et la source au slot
-    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) effect);
-    alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, NULL);
+    alAuxiliaryEffectSloti(slot, AL_EFFECTSLOT_EFFECT, (ALint) *effect);
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, (ALint) slot, 0, 0);
 
     play(source);
 
-    alSource3i(source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, NULL);
+    alSource3i(source, AL_AUXILIARY_SEND_FILTER, AL_EFFECTSLOT_NULL, 0, 0);
 
     alDeleteAuxiliaryEffectSlots(1, &slot);
     alDeleteEffects(1, &effect);
-}
-
-
-void play(ALuint source) {
-    alSourcePlay(source);
-
-    ALenum state;
-    alGetSourcei(source, AL_SOURCE_STATE, &state);
-
-    while (alGetError() == AL_NO_ERROR && state == AL_PLAYING)
-        alGetSourcei(source, AL_SOURCE_STATE, &state);
 }
 
 
