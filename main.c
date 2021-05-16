@@ -58,16 +58,16 @@ void runner(int** maze, t_position player, t_position exit) {
 
         if (currentKeyStates[SDL_SCANCODE_UP]) {
         
-            if (player.d == NORD && maze[player.x][player.y - 1])
+            if (player.d == NORD && maze[player.x][MAX(0, player.y - 1)])
                 player.y = MAX(0, player.y - 1);
 
-            else if (player.d == EST && maze[player.x + 1][player.y])
+            else if (player.d == EST && maze[MIN(SIZE - 1, player.x + 1)][player.y])
                 player.x = MIN(SIZE - 1, player.x + 1);
 
-            else if (player.d == OUEST && maze[player.x - 1][player.y])
+            else if (player.d == OUEST && maze[MAX(0, player.x - 1)][player.y])
                 player.x = MAX(0, player.x - 1);
 
-            else if (player.d == SUD && maze[player.x][player.y + 1])
+            else if (player.d == SUD && maze[player.x][MIN(SIZE - 1, player.y + 1)])
                 player.y = MIN(SIZE - 1, player.y + 1);
 
             action(maze, player);
